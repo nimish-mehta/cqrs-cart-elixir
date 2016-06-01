@@ -10,7 +10,7 @@ defmodule EventStore do
   end
 
   def events do
-    Agent.get(__MODULE__, fn (events) -> events end)
+    Agent.get(__MODULE__, fn (events) -> Enum.reverse(events) end)
   end
 
 end
