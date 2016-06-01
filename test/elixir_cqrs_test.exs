@@ -106,7 +106,6 @@ defmodule ElixirCqrsTest do
   test "cart projection" do
     EventStore.init
     {:ok, cart} = Repo.execute_command(%Cart{}, %CreateCart{})  # 1 event
-    IO.inspect cart
     inventory = %Inventory{}
     {:ok, cart, inventory} = MoveItemFromInventoryToCart.run(cart, inventory, "1", 2) # 2 events
     {:ok, cart, inventory} = MoveItemFromInventoryToCart.run(cart, inventory, "3", 2) # 2 events
@@ -114,7 +113,6 @@ defmodule ElixirCqrsTest do
 
     {:ok, cart, inventory} = MoveItemFromCartToInventory.run(cart, inventory, "1", 2) # 2 events
     {:ok, cart, inventory} = MoveItemFromCartToInventory.run(cart, inventory, "3", 1) # 2 events
-    IO.inspect cart
     assert Enum.count(EventStore.events) == 11
     assert Projection.Cart.consume_events(EventStore, cart.id) == %Projection.Cart{id: cart.id,
                                                                                    line_items: %{"2" => {2, %{id: "2"}}, "3" => {1, %{id: "3"}}}}
